@@ -26,7 +26,7 @@ const intializePage = function(){
   initializeCapitalsList();
   addCapitalsToSelectList();
   addEventListenerCapitalSelected();
-
+  addEventListenerSpotMe();
 
 }
 
@@ -78,6 +78,10 @@ const addEventListenerCapitalSelected = function(){
   document.getElementById('select-capital-list').addEventListener("change", findCapitalOnGoogleMap);
 }
 
+const addEventListenerSpotMe = function(){
+  document.getElementById('button-spot-me').addEventListener("click", spotMeOnGoogleMap);
+}
+
 const findCapitalOnGoogleMap = function(event){
 
   let capitalSelected = findCapitalByName(this.value);
@@ -85,10 +89,25 @@ const findCapitalOnGoogleMap = function(event){
   if(capitalSelected != null)
   {
     let coordinates     = capitalSelected.getCoordinatesForGoogleMap();
-    let container       = document.getElementById('main-map');
-    const mainMap       = new MapWrapper(container, coordinates, 10);
-    mainMap.addMarker(capitalSelected);
+    setMap(coordinates).addMarker(capitalSelected);
   }
+}
+
+const spotMeOnGoogleMap = function(){
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      setMap({lat: position.coords.latitude, lng: position.coords.longitude});
+    });
+  }
+  else{
+    window.alert("Sorry, your current location is not available.")
+  }
+}
+
+const setMap = function(coordinates){
+  let container       = document.getElementById('main-map');
+  const mainMap       = new MapWrapper(container, coordinates, 10);
+  return mainMap;
 }
 
 const findCapitalByName = function(name){
