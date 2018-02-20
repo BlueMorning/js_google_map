@@ -84,10 +84,10 @@ const findCapitalOnGoogleMap = function(event){
 
   if(capitalSelected != null)
   {
-    let coordinates     = {lat: capitalSelected.coordinates.latitude, lng: capitalSelected.coordinates.longitude};
+    let coordinates     = capitalSelected.getCoordinatesForGoogleMap();
     let container       = document.getElementById('main-map');
     const mainMap       = new MapWrapper(container, coordinates, 10);
-    mainMap.addMarker(coordinates);
+    mainMap.addMarker(capitalSelected);
   }
 }
 
