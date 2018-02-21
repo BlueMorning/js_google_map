@@ -20,6 +20,7 @@
 // }
 
 let capitalsList=[];
+let timeout;
 
 const intializePage = function(){
 
@@ -27,7 +28,7 @@ const intializePage = function(){
   addCapitalsToSelectList();
   addEventListenerCapitalSelected();
   addEventListenerSpotMe();
-
+  addEventListenerAutoTravel();
 }
 
 
@@ -82,21 +83,61 @@ const addEventListenerSpotMe = function(){
   document.getElementById('button-spot-me').addEventListener("click", spotMeOnGoogleMap);
 }
 
+const addEventListenerAutoTravel = function(){
+  document.getElementById('checkbox-auto-travel').addEventListener('click', autoTravel);
+}
+
+const autoTravel = function(){
+
+  if(this.checked){
+    autoChangeLocation()
+  }
+  else{
+    if(timeout != null){
+      clearTimeout(timeout);
+    }
+  }
+}
+
+function autoChangeLocation(){
+
+  const select     = document.getElementById('select-capital-list');
+
+  let capitalIndex = select.selectedIndex;
+
+  if(capitalIndex < capitalsList.length){
+    select.selectedIndex += 1;
+  }
+  else {
+    select.selectedIndex = 1;
+  }
+
+  setMapAndAddMarker(findCapitalByName(select.value));
+
+  timeout = setTimeout(autoChangeLocation, 3000);
+}
+
+
 const findCapitalOnGoogleMap = function(event){
 
   let capitalSelected = findCapitalByName(this.value);
 
   if(capitalSelected != null)
   {
-    let coordinates     = capitalSelected.getCoordinatesForGoogleMap();
-    setMap(coordinates).addMarker(capitalSelected);
+    setMapAndAddMarker(capitalSelected);
   }
+}
+
+const setMapAndAddMarker = function(capitalSelected){
+  let coordinates     = capitalSelected.getCoordinatesForGoogleMap();
+  setMap(coordinates).addMarker(capitalSelected);
 }
 
 const spotMeOnGoogleMap = function(){
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      setMap({lat: position.coords.latitude, lng: position.coords.longitude});
+      setMap({lat: position.coords.latitude, lng: position.coords.longitude})
+      .addLocalMarker({lat: position.coords.latitude, lng: position.coords.longitude});
     });
   }
   else{

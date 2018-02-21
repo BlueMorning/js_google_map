@@ -23,3 +23,12 @@ MapWrapper.prototype.addClickEvent = function(){
     this.addMarker({lat: event.latLng.lat(), lng: event.latLng.lng()});
   }.bind(this));
 };
+
+
+MapWrapper.prototype.addLocalMarker = function(position){
+  const marker = new google.maps.Marker({
+    position: position,
+    map: this.googleMap,
+    title: "Your are here !"
+  });
+}
